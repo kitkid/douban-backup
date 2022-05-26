@@ -1,8 +1,10 @@
 const {config} = require('dotenv');
 const {Client} = require("@notionhq/client");
 const dayjs = require('dayjs');
+const utc = require('dayjs/plugin/utc');
 const timezone = require('dayjs/plugin/timezone');
 dayjs.extend(timezone);
+dayjs.tz.setDefault("Asia/Shanghai");
 const got = require('got');
 const jsdom = require("jsdom");
 const {JSDOM} = jsdom;
