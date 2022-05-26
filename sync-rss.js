@@ -3,8 +3,9 @@ const {Client} = require("@notionhq/client");
 const dayjs = require('dayjs');
 const utc = require('dayjs/plugin/utc');
 const timezone = require('dayjs/plugin/timezone');
+const tz = require('dayjs/plugin/timezone');
 dayjs.extend(timezone);
-dayjs.tz.setDefault("Asia/Shanghai");
+dayjs.tz.setDefault('Asia/Shanghai');
 const got = require('got');
 const jsdom = require("jsdom");
 const {JSDOM} = jsdom;
@@ -154,7 +155,7 @@ async function handleFeed(feed, category) {
       itemData = await fetchItem(link, category);
       itemData[DB_PROPERTIES.ITEM_LINK] = link;
       itemData[DB_PROPERTIES.RATING] = item.rating;
-      itemData[DB_PROPERTIES.RATING_DATE] = dayjs(item.time).format('YYYY-MM-DD hh:mm +08:00');
+      itemData[DB_PROPERTIES.RATING_DATE] = dayjs(item.time).tz.('Asia/Shanghai').format('YYYY-MM-DD HH:mm');
       itemData[DB_PROPERTIES.COMMENTS] = item.comment;
       itemData[DB_PROPERTIES.TAGS] = item.tags;
     } catch (error) {
