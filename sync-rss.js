@@ -1,6 +1,8 @@
 const {config} = require('dotenv');
 const {Client} = require("@notionhq/client");
 const dayjs = require('dayjs');
+const timezone = require('dayjs/plugin/timezone');
+dayjs.extend(timezone);
 const got = require('got');
 const jsdom = require("jsdom");
 const {JSDOM} = jsdom;
@@ -62,11 +64,16 @@ const dramaDBID = process.env.NOTION_DRAMA_DATABASE_ID;
     if (comment.length) {
       comment = comment[0].textContent.replace(/^备注: /, '').trim();
     }
+    let tags = contents.filter(el => el.textContent.startsWith('标签'));
+    if (tags.length) {
+      tags = tags[0].textContent.replace(/^标签: /, '').trim();
+    }
     const result = {
       id,
       link: item.link,
       rating: typeof rating === 'number' ? rating : null,
       comment: typeof comment === 'string' ? comment : null, // 备注：XXX -> 短评
+      tags: typeof tags === 'string' ? tags : null, // 标签：XXX -> 标签
       time: item.isoDate, // '2021-05-30T06:49:34.000Z'
     };
     if (!feedData[category]) {
@@ -145,8 +152,9 @@ async function handleFeed(feed, category) {
       itemData = await fetchItem(link, category);
       itemData[DB_PROPERTIES.ITEM_LINK] = link;
       itemData[DB_PROPERTIES.RATING] = item.rating;
-      itemData[DB_PROPERTIES.RATING_DATE] = dayjs(item.time).format('YYYY-MM-DD HH:MM:SS');
+      itemData[DB_PROPERTIES.RATING_DATE] = dayjs(item.time).format('YYYY-MM-DD hh:mm +08:00');
       itemData[DB_PROPERTIES.COMMENTS] = item.comment;
+      itemData[DB_PROPERTIES.TAGS] = item.tags;
     } catch (error) {
       console.error(link, error);
     }

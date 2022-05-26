@@ -157,7 +157,7 @@ async function addToNotion(itemData) {
         [DB_PROPERTIES.RATING]: {
           'multi_select': itemData[DB_PROPERTIES.RATING] ? [
             {
-              name: itemData[DB_PROPERTIES.RATING].toString(),
+              name: itemData[DB_PROPERTIES.RATING],
             },
           ] : [], // if no rating, then this multi_select should be an empty array
         },
@@ -175,6 +175,13 @@ async function addToNotion(itemData) {
               },
             },
           ],
+        },
+        [DB_PROPERTIES.TAGS]: { // array
+          'multi_select': itemData[DB_PROPERTIES.TAGS] ? [
+            {
+              name: itemData[DB_PROPERTIES.TAGS].toString(),
+            },
+          ] : [], // if no tags, then this multi_select should be an empty array
         },
         [DB_PROPERTIES.YEAR]: {
           number: Number(itemData[DB_PROPERTIES.YEAR]),
