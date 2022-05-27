@@ -156,7 +156,7 @@ async function handleFeed(feed, category) {
       itemData = await fetchItem(link, category);
       itemData[DB_PROPERTIES.ITEM_LINK] = link;
       itemData[DB_PROPERTIES.RATING] = item.rating;
-      itemData[DB_PROPERTIES.RATING_DATE] = dayjs(item.time).tz('Asia/Shanghai').format('YYYY-MM-DD HH:mm +08');
+      itemData[DB_PROPERTIES.RATING_DATE] = dayjs(item.time).tz('Asia/Shanghai').format('YYYY-MM-DD HH:mm');
       itemData[DB_PROPERTIES.COMMENTS] = item.comment;
       itemData[DB_PROPERTIES.TAGS] = item.tags;
     } catch (error) {
