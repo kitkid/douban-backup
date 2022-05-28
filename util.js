@@ -7,6 +7,7 @@ const DB_PROPERTIES = {
   COMMENTS: '我的短评', // common
   TAGS: '标签',
   YEAR: '上映年份',
+  COUNTRYINFO: '制片国家',
   DIRECTORS: '导演',
   ACTORS: '主演',
   GENRE: '类型', // movie, game, drama
@@ -30,6 +31,7 @@ const PropertyType = {
   COMMENTS: 'rich_text',
   TAGS: 'multi_select',
   YEAR: 'number',
+  COUNTRYINFO: 'rich_text',
   DIRECTORS: 'rich_text',
   ACTORS: 'rich_text',
   GENRE: 'multi_select',
