@@ -254,8 +254,12 @@ async function fetchItem(link, category) {
     if (imdbInfo.length) {
       itemData[DB_PROPERTIES.IMDB_LINK] = 'https://www.imdb.com/title/' + imdbInfo[0].nextSibling.textContent.trim();
     }
-    itemData[DB_PROPERTIES.COUNTRYINFO] = [...dom.window.document.querySelectorAll('#info span.pl')].filter(i => i.textContent.startsWith('制片国家/地区:')).textContent;
-    
+    const countryInfo = [...dom.window.document.querySelectorAll('#info span.pl')].filter(i => i.textContent.startsWith('制片国家/地区:'));
+    if (countryInfo.length) {
+      itemData[DB_PROPERTIES.COUNTRYINFO] = countryInfo[0].nextSibling.textContent.trim();
+    console.log(countryInfo);
+    }
+
 
   // music item page
   } else if (category === CATEGORY.music) {
