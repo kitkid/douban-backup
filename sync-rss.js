@@ -68,9 +68,11 @@ const dramaDBID = process.env.NOTION_DRAMA_DATABASE_ID;
     if (comment.length) {
       comment = comment[0].textContent.replace(/^备注: /, '').trim();
     }
-    let tags = contents.filter(el => el.textContent.startsWith('标签'));
-    if (tags.length) {
-      tags = tags[0].textContent.replace(/^标签: /, '').trim().replace(/ /, ',');
+    let tags_str = contents.filter(el => el.textContent.startsWith('标签'));
+    let tags = [];
+    if (tags_str.length) {
+      tags_str = tags_str[0].textContent.replace(/^标签: /, '').trim();
+      let tags = tags_str.split(' ');
       console.log(tags);
     }
     const result = {
@@ -78,7 +80,7 @@ const dramaDBID = process.env.NOTION_DRAMA_DATABASE_ID;
       link: item.link,
       rating: typeof rating === 'number' ? rating : null,
       comment: typeof comment === 'string' ? comment : null, // 备注：XXX -> 短评
-      tags: typeof tags === 'string' ? tags : null, // 标签：XXX -> 标签
+      tags: tags,
       time: item.isoDate, // '2021-05-30T06:49:34.000Z'
     };
     if (!feedData[category]) {
@@ -358,7 +360,7 @@ function getPropertyValue(value, type, key) {
       };
       break;
     case 'multi_select':
-      res = (key === DB_PROPERTIES.RATING)||(key === DB_PROPERTIES.TAGS) ? {
+      res = key === DB_PROPERTIES.RATING ? {
         'multi_select': value ? [
           {
             name: value.toString(),
@@ -380,7 +382,7 @@ function getPropertyValue(value, type, key) {
             },
           },
         ],
-      }
+      };
       break;
     case 'number':
       res = {
