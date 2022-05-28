@@ -80,7 +80,7 @@ const dramaDBID = process.env.NOTION_DRAMA_DATABASE_ID;
       link: item.link,
       rating: typeof rating === 'number' ? rating : null,
       comment: typeof comment === 'string' ? comment : null, // 备注：XXX -> 短评
-      tags: tags_options.length > 0 ? tags : null, // 标签：XXX -> 标签
+      tags: tags_options.length > 0 ? tags_options : null, // 标签：XXX -> 标签
       time: item.isoDate, // '2021-05-30T06:49:34.000Z'
     };
     if (!feedData[category]) {
