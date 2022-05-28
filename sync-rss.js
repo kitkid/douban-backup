@@ -70,7 +70,8 @@ const dramaDBID = process.env.NOTION_DRAMA_DATABASE_ID;
     }
     let tags = contents.filter(el => el.textContent.startsWith('标签'));
     if (tags.length) {
-      tags = tags[0].textContent.replace(/^标签: /, '').trim().replace(/ /, ',');
+      tags = tags[0].textContent.replace(/^标签: /, '').trim();
+      tags.str.split(' ');
       console.log(tags);
     }
     const result = {
@@ -78,7 +79,7 @@ const dramaDBID = process.env.NOTION_DRAMA_DATABASE_ID;
       link: item.link,
       rating: typeof rating === 'number' ? rating : null,
       comment: typeof comment === 'string' ? comment : null, // 备注：XXX -> 短评
-      tags: typeof tags === 'string' ? tags : null, // 标签：XXX -> 标签
+      tags: typeof tags === 'string[]' ? tags : null, // 标签：XXX -> 标签
       time: item.isoDate, // '2021-05-30T06:49:34.000Z'
     };
     if (!feedData[category]) {
@@ -358,7 +359,7 @@ function getPropertyValue(value, type, key) {
       };
       break;
     case 'multi_select':
-      res = (key === DB_PROPERTIES.RATING)||(key === DB_PROPERTIES.TAGS) ? {
+      res = key === DB_PROPERTIES.RATING ? {
         'multi_select': value ? [
           {
             name: value.toString(),
@@ -441,6 +442,7 @@ async function addToNotion(itemData, category) {
         },
       }
     }
+    console.log(postData);
     const response = await notion.pages.create(postData);
     if (response && response.id) {
       console.log(itemData[DB_PROPERTIES.TITLE] + `[${itemData[DB_PROPERTIES.ITEM_LINK]}]` + ' page created.');
