@@ -161,7 +161,7 @@ async function addToNotion(itemData) {
         [DB_PROPERTIES.RATING]: {
           'multi_select': itemData[DB_PROPERTIES.RATING] ? [
             {
-              name: itemData[DB_PROPERTIES.RATING],
+              name: itemData[DB_PROPERTIES.RATING].toString(),
             },
           ] : [], // if no rating, then this multi_select should be an empty array
         },
