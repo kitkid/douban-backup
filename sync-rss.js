@@ -323,7 +323,7 @@ async function fetchItem(link, category) {
   return itemData;
 }
 
-function getPropertyValye(value, type, key) {
+function getPropertyValue(value, type, key) {
   let res = null;
   switch (type) {
     case 'title':
@@ -407,7 +407,7 @@ async function addToNotion(itemData, category) {
     const keys = Object.keys(DB_PROPERTIES);
     keys.forEach(key => {
       if (itemData[DB_PROPERTIES[key]]) {
-        properties[DB_PROPERTIES[key]] = getPropertyValye(itemData[DB_PROPERTIES[key]], PropertyType[key], DB_PROPERTIES[key]);
+        properties[DB_PROPERTIES[key]] = getPropertyValue(itemData[DB_PROPERTIES[key]], PropertyType[key], DB_PROPERTIES[key]);
       }
     });
 
