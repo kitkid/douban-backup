@@ -71,6 +71,7 @@ const dramaDBID = process.env.NOTION_DRAMA_DATABASE_ID;
     let tags = contents.filter(el => el.textContent.startsWith('标签'));
     if (tags.length) {
       tags = tags[0].textContent.replace(/^标签: /, '').trim();
+      console.log(tags);
     }
     const result = {
       id,

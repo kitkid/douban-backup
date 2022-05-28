@@ -5,6 +5,7 @@ const DB_PROPERTIES = {
   RATING: '个人评分', // common
   RATING_DATE: '打分日期', // common
   COMMENTS: '我的短评', // common
+  TAGS: '标签'
   YEAR: '上映年份',
   DIRECTORS: '导演',
   ACTORS: '主演',
