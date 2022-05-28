@@ -358,7 +358,7 @@ function getPropertyValue(value, type, key) {
       };
       break;
     case 'multi_select':
-      res = key === DB_PROPERTIES.RATING ? {
+      res = (key === DB_PROPERTIES.RATING)||(key === DB_PROPERTIES.TAGS) ? {
         'multi_select': value ? [
           {
             name: value.toString(),

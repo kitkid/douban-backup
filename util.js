@@ -28,7 +28,7 @@ const PropertyType = {
   RATING: 'multi_select',
   RATING_DATE: 'date',
   COMMENTS: 'rich_text',
-  TAGS:'multi_select',
+  TAGS: 'multi_select',
   YEAR: 'number',
   DIRECTORS: 'rich_text',
   ACTORS: 'rich_text',
