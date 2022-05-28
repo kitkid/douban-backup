@@ -1,6 +1,12 @@
 const {config} = require('dotenv');
 const {Client} = require("@notionhq/client");
 const dayjs = require('dayjs');
+const utc = require('dayjs/plugin/utc');
+const timezone = require('dayjs/plugin/timezone');
+const tz = require('dayjs/plugin/timezone');
+dayjs.extend(utc);
+dayjs.extend(timezone);
+dayjs.tz.setDefault('Asia/Shanghai');
 const got = require('got');
 const jsdom = require("jsdom");
 const {JSDOM} = jsdom;
@@ -62,11 +68,18 @@ const dramaDBID = process.env.NOTION_DRAMA_DATABASE_ID;
     if (comment.length) {
       comment = comment[0].textContent.replace(/^备注: /, '').trim();
     }
+    let tags = contents.filter(el => el.textContent.startsWith('标签'));
+    let tags_options = [];
+    if (tags.length) {
+      tags = tags[0].textContent.replace(/^标签: /, '').trim();
+      tags_options = tags.split(' ');
+    }
     const result = {
       id,
       link: item.link,
       rating: typeof rating === 'number' ? rating : null,
       comment: typeof comment === 'string' ? comment : null, // 备注：XXX -> 短评
+      tags: tags_options.length > 0 ? tags_options : null, // 标签：XXX -> 标签
       time: item.isoDate, // '2021-05-30T06:49:34.000Z'
     };
     if (!feedData[category]) {
@@ -145,8 +158,9 @@ async function handleFeed(feed, category) {
       itemData = await fetchItem(link, category);
       itemData[DB_PROPERTIES.ITEM_LINK] = link;
       itemData[DB_PROPERTIES.RATING] = item.rating;
-      itemData[DB_PROPERTIES.RATING_DATE] = dayjs(item.time).format('YYYY-MM-DD HH:mm');
+      itemData[DB_PROPERTIES.RATING_DATE] = dayjs(item.time).tz('Asia/Shanghai').format('YYYY-MM-DD HH:mm+08:00');
       itemData[DB_PROPERTIES.COMMENTS] = item.comment;
+      itemData[DB_PROPERTIES.TAGS] = item.tags;
     } catch (error) {
       console.error(link, error);
     }
@@ -239,6 +253,10 @@ async function fetchItem(link, category) {
     if (imdbInfo.length) {
       itemData[DB_PROPERTIES.IMDB_LINK] = 'https://www.imdb.com/title/' + imdbInfo[0].nextSibling.textContent.trim();
     }
+    const countryInfo = [...dom.window.document.querySelectorAll('#info span.pl')].filter(i => i.textContent.startsWith('制片国家/地区:'));
+    if (countryInfo.length) {
+      itemData[DB_PROPERTIES.COUNTRYINFO] = countryInfo[0].nextSibling.textContent.trim();
+    }
 
   // music item page
   } else if (category === CATEGORY.music) {
@@ -310,7 +328,7 @@ async function fetchItem(link, category) {
   return itemData;
 }
 
-function getPropertyValye(value, type, key) {
+function getPropertyValue(value, type, key) {
   let res = null;
   switch (type) {
     case 'title':
@@ -394,7 +412,7 @@ async function addToNotion(itemData, category) {
     const keys = Object.keys(DB_PROPERTIES);
     keys.forEach(key => {
       if (itemData[DB_PROPERTIES[key]]) {
-        properties[DB_PROPERTIES[key]] = getPropertyValye(itemData[DB_PROPERTIES[key]], PropertyType[key], DB_PROPERTIES[key]);
+        properties[DB_PROPERTIES[key]] = getPropertyValue(itemData[DB_PROPERTIES[key]], PropertyType[key], DB_PROPERTIES[key]);
       }
     });
 
@@ -428,6 +446,7 @@ async function addToNotion(itemData, category) {
         },
       }
     }
+    console.log(postData);
     const response = await notion.pages.create(postData);
     if (response && response.id) {
       console.log(itemData[DB_PROPERTIES.TITLE] + `[${itemData[DB_PROPERTIES.ITEM_LINK]}]` + ' page created.');
