@@ -69,17 +69,18 @@ const dramaDBID = process.env.NOTION_DRAMA_DATABASE_ID;
       comment = comment[0].textContent.replace(/^备注: /, '').trim();
     }
     let tags = contents.filter(el => el.textContent.startsWith('标签'));
+    let tags_options = [];
     if (tags.length) {
       tags = tags[0].textContent.replace(/^标签: /, '').trim();
-      tags.str.split(' ');
-      console.log(tags);
+      tags_options = tags.split(' ');
+      console.log(tags_options);
     }
     const result = {
       id,
       link: item.link,
       rating: typeof rating === 'number' ? rating : null,
       comment: typeof comment === 'string' ? comment : null, // 备注：XXX -> 短评
-      tags: typeof tags === 'string[]' ? tags : null, // 标签：XXX -> 标签
+      tags: tags_options.length > 0 ? tags : null, // 标签：XXX -> 标签
       time: item.isoDate, // '2021-05-30T06:49:34.000Z'
     };
     if (!feedData[category]) {
