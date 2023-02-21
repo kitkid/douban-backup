@@ -456,5 +456,6 @@ async function addToNotion(itemData, category) {
     }
   } catch (error) {
     console.warn('Failed to create ' + itemData[DB_PROPERTIES.TITLE] + `(${itemData[DB_PROPERTIES.ITEM_LINK]})` + ' with error: ', error);
+    process.exit(1);
   }
 }
