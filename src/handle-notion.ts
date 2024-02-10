@@ -1,10 +1,15 @@
 import dayjs from 'dayjs';
+const utc = require('dayjs/plugin/utc');
+const timezone = require('dayjs/plugin/timezone');
+const tz = require('dayjs/plugin/timezone');
+dayjs.extend(utc);
+dayjs.extend(timezone);
+dayjs.tz.setDefault('Asia/Shanghai');
 import dotenv from 'dotenv';
 import { Client } from '@notionhq/client';
 import { type CreatePageParameters } from '@notionhq/client/build/src/api-endpoints';
 import scrapyDouban from './handle-douban';
 import { getDBID, sleep, buildPropertyValue } from './utils';
-import { PropertyTypeMap, EMOJI } from './const';
 import DB_PROPERTIES from '../cols.json';
 import {
   ItemCategory,
@@ -21,6 +26,16 @@ dotenv.config();
 
 const notion = new Client({
   auth: process.env.NOTION_TOKEN,
+  /*if (comment.length) {
+      comment = comment[0].textContent.replace(/^备注: /, '').trim();
+    }
+    let tags = contents.filter(el => el.textContent.startsWith('标签'));
+    let tags_options = [];
+    if (tags.length) {
+      tags = tags[0].textContent.replace(/^标签: /, '').trim();
+      tags_options = tags.split(' ');
+      console.log(tags_options);
+    }*/
 });
 
 /**
@@ -124,8 +139,10 @@ async function syncNotionDB(categorizedFeeds: FeedItem[], category: ItemCategory
       const itemData = await scrapyDouban(newFeedItem.link, category);
       itemData[DB_PROPERTIES.ITEM_LINK] = newFeedItem.link;
       itemData[DB_PROPERTIES.RATING] = newFeedItem.rating;
-      itemData[DB_PROPERTIES.RATING_DATE] = dayjs(newFeedItem.time).format('YYYY-MM-DD');
+      itemData[DB_PROPERTIES.RATING_DATE] = dayjs(item.time).tz('Asia/Shanghai').format('YYYY-MM-DD HH:mm+08:00');
       itemData[DB_PROPERTIES.COMMENTS] = newFeedItem.comment;
+      itemData[DB_PROPERTIES.TAGS] = item.tags;
+      itemData[DB_PROPERTIES.COUNTRYINFO] = item.countryInfo;
       const successful = await addItemToNotion(itemData, category);
       if (!successful) {
         failedItems.push({
