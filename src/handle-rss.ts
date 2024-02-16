@@ -71,7 +71,6 @@ export function handleRSSFeeds(feeds: RSSFeedItem[]): FeedItem[] {
     if (tags.length) {
       tags = tags[0].textContent.replace(/^标签: /, '').trim();
       tags_options = tags.split(' ');
-      console.log(tags_options);
     }
 
     const result = {
