@@ -11,6 +11,7 @@ import { type CreatePageParameters } from '@notionhq/client/build/src/api-endpoi
 import scrapyDouban from './handle-douban';
 import { getDBID, sleep, buildPropertyValue } from './utils';
 import DB_PROPERTIES from '../cols.json';
+import { PropertyTypeMap } from './const';
 import {
   ItemCategory,
   type FeedItem,
