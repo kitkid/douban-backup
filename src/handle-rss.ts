@@ -72,6 +72,7 @@ export function handleRSSFeeds(feeds: RSSFeedItem[]): FeedItem[] {
       tags = tags[0].textContent.replace(/^标签: /, '').trim();
       tags_options = tags.split(' ');
       console.log(tags_options);
+    }
 
     const result = {
       id,
@@ -84,7 +85,7 @@ export function handleRSSFeeds(feeds: RSSFeedItem[]): FeedItem[] {
       category,
     } as FeedItem;
     normalizedFeeds.push(result);
-  };
+  });
 
   return normalizedFeeds;
 }
