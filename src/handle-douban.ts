@@ -46,17 +46,17 @@ function buildMovieItem(doc: Document) {
   const genre = [...doc.querySelectorAll('#info [property="v:genre"]')].map(i => i.textContent || '').filter(v => v);
   const imdbInfo = [...doc.querySelectorAll(InfoSelector)].filter(i => i.textContent?.startsWith('IMDb'));
   const imdbLink = imdbInfo.length ? 'https://www.imdb.com/title/' + imdbInfo[0].nextSibling?.textContent?.trim() : '';
+  let countryInfoValue = "";
   const countryInfo = [...doc.querySelectorAll('#info span.pl')].filter(i => i.textContent.startsWith('制片国家/地区:'));
     if (countryInfo.length) {
-      itemData[DB_PROPERTIES.COUNTRYINFO] = countryInfo[0].nextSibling.textContent.trim();
-      console.log(countryInfo);
+      countryInfoValue = countryInfo[0].nextSibling.textContent.trim();
     }
 
   return {
     [DB_PROPERTIES.NAME]: title,
     [DB_PROPERTIES.MOVIE_TITLE]: title,
     [DB_PROPERTIES.YEAR]: year,
-    [DB_PROPERTIES.COUNTRYINFO]: countryInfo,
+    [DB_PROPERTIES.COUNTRYINFO]: countryInfoValue,
     [DB_PROPERTIES.POSTER]: poster, // optional
     [DB_PROPERTIES.DIRECTORS]: directors,
     [DB_PROPERTIES.ACTORS]: actors,
