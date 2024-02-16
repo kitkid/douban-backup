@@ -66,12 +66,20 @@ export function handleRSSFeeds(feeds: RSSFeedItem[]): FeedItem[] {
     if (commentElements.length) {
       comment = commentElements[0].textContent!.replace(/^备注: /, '').trim();
     }
+    let tags = contents.filter(el => el.textContent.startsWith('标签'));
+    let tags_options = [];
+    if (tags.length) {
+      tags = tags[0].textContent.replace(/^标签: /, '').trim();
+      tags_options = tags.split(' ');
+      console.log(tags_options);
+
     const result = {
       id,
       link: item.link,
       rating: ratingNumber || null,
       comment: typeof comment === 'string' ? comment : null, // 备注：XXX -> 短评
       time: item.isoDate, // '2021-05-30T06:49:34.000Z'
+      tags: tags_options.length > 0 ? tags_options : null, // 标签
       status,
       category,
     } as FeedItem;

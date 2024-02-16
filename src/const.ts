@@ -43,6 +43,7 @@ export const PropertyTypeMap: Record<DB_PROPERTIES_KEYS, NotionPropTypesEnum> = 
   DRAMA_TITLE: NotionPropTypesEnum.TITLE,
   COVER: NotionPropTypesEnum.FILES,
   TAGS:  NotionPropTypesEnum.MULTI_SELECT,
+  COMMENTS:  NotionPropTypesEnum.RICH_TEXT,
   COUNTRYINFO: NotionPropTypesEnum.RICH_TEXT,
   RATING: NotionPropTypesEnum.MULTI_SELECT,
   RATING_DATE: NotionPropTypesEnum.DATE,

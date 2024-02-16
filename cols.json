@@ -7,6 +7,10 @@
   "TAGS": "标签",
   "ACTORS": "主演",
   "COUNTRYINFO": "制片国家",
+  "RATING": "个人评分",
+  "RATING_DATE": "打分日期",
+  "COMMENTS": "我的短评",
+  "ITEM_LINK": "条目链接",
   "GENRE": "类型",
   "IMDB_LINK": "IMDb 链接",
   "COVER": "封面",
@@ -20,9 +24,5 @@
   "ISBN": "ISBN",
   "GAME_TITLE": "游戏名称",
   "DRAMA_TITLE": "舞台剧名称",
-  "RATING": "个人评分",
-  "RATING_DATE": "打分日期",
-  "COMMENTS": "我的短评",
 
-  "ITEM_LINK": "条目链接"
 }

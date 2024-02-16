@@ -1,7 +1,7 @@
 import dayjs from 'dayjs';
-const utc = require('dayjs/plugin/utc');
-const timezone = require('dayjs/plugin/timezone');
-const tz = require('dayjs/plugin/timezone');
+import utc from 'dayjs/plugin/utc';
+import timezone from 'dayjs/plugin/timezone';
+import tz from 'dayjs/plugin/timezone';
 dayjs.extend(utc);
 dayjs.extend(timezone);
 dayjs.tz.setDefault('Asia/Shanghai');
@@ -20,22 +20,12 @@ import {
 } from './types';
 
 // https://github.com/makenotion/notion-sdk-js/issues/280#issuecomment-1178523498
-type EmojiRequest = Extract<CreatePageParameters['icon'], { type?: 'emoji'; }>['emoji'];
+
 
 dotenv.config();
 
 const notion = new Client({
   auth: process.env.NOTION_TOKEN,
-  /*if (comment.length) {
-      comment = comment[0].textContent.replace(/^备注: /, '').trim();
-    }
-    let tags = contents.filter(el => el.textContent.startsWith('标签'));
-    let tags_options = [];
-    if (tags.length) {
-      tags = tags[0].textContent.replace(/^标签: /, '').trim();
-      tags_options = tags.split(' ');
-      console.log(tags_options);
-    }*/
 });
 
 /**
@@ -139,10 +129,9 @@ async function syncNotionDB(categorizedFeeds: FeedItem[], category: ItemCategory
       const itemData = await scrapyDouban(newFeedItem.link, category);
       itemData[DB_PROPERTIES.ITEM_LINK] = newFeedItem.link;
       itemData[DB_PROPERTIES.RATING] = newFeedItem.rating;
-      itemData[DB_PROPERTIES.RATING_DATE] = dayjs(item.time).tz('Asia/Shanghai').format('YYYY-MM-DD HH:mm+08:00');
+      itemData[DB_PROPERTIES.RATING_DATE] = dayjs(newFeedItem.time).tz('Asia/Shanghai').format('YYYY-MM-DD HH:mm+08:00');
       itemData[DB_PROPERTIES.COMMENTS] = newFeedItem.comment;
-      itemData[DB_PROPERTIES.TAGS] = item.tags;
-      itemData[DB_PROPERTIES.COUNTRYINFO] = item.countryInfo;
+      itemData[DB_PROPERTIES.TAGS] = newFeedItem.tags;
       const successful = await addItemToNotion(itemData, category);
       if (!successful) {
         failedItems.push({
@@ -214,10 +203,7 @@ async function addItemToNotion(itemData: {
       parent: {
         database_id: dbid,
       },
-      icon: {
-        type: 'emoji',
-        emoji: EMOJI[category] as EmojiRequest,
-      },
+
       // fill in properties by the format: https://developers.notion.com/reference/page#page-property-value
       properties,
     };
