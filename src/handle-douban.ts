@@ -46,7 +46,7 @@ function buildMovieItem(doc: Document) {
   const genre = [...doc.querySelectorAll('#info [property="v:genre"]')].map(i => i.textContent || '').filter(v => v);
   const imdbInfo = [...doc.querySelectorAll(InfoSelector)].filter(i => i.textContent?.startsWith('IMDb'));
   const imdbLink = imdbInfo.length ? 'https://www.imdb.com/title/' + imdbInfo[0].nextSibling?.textContent?.trim() : '';
-  const countryInfo = [...dom.window.document.querySelectorAll('#info span.pl')].filter(i => i.textContent.startsWith('制片国家/地区:'));
+  const countryInfo = [...doc.querySelectorAll('#info span.pl')].filter(i => i.textContent.startsWith('制片国家/地区:'));
     if (countryInfo.length) {
       itemData[DB_PROPERTIES.COUNTRYINFO] = countryInfo[0].nextSibling.textContent.trim();
       console.log(countryInfo);
