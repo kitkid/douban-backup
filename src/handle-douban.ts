@@ -1,6 +1,7 @@
 import got from 'got';
 import { JSDOM } from 'jsdom';
 import dayjs from 'dayjs';
+import { consola } from 'consola';
 import { ItemCategory } from './types';
 import DB_PROPERTIES from '../cols.json';
 
@@ -14,7 +15,7 @@ const InfoSelector = '#info span.pl';
 export default async function scrapyDouban(link: string, category: ItemCategory): Promise<{
     [key: string]: string | string[] | number | null | undefined;
 }> {
-  console.log(`Scraping ${category} item with link: ${link}`);
+  consola.start(`Scraping ${category} item with link: ${link}`);
   const response = await got(link);
   const dom = new JSDOM(response.body);
   const doc = dom.window.document;
@@ -94,10 +95,11 @@ function buildBookItem(doc: Document) {
   const cover = img?.title !== ImgDefaultTitle.Cover && img?.src.length <= 100 ? img?.src.replace(/\.webp$/, '.jpg') : '';
   const info = [...doc.querySelectorAll(InfoSelector)];
 
-  let writer = '', publisher = '', bookTitle = '', publishDate = '', isbn = 0;
+  let writer = '', publisher = '', bookTitle = title, publishDate = '', isbn = 0;
   info.forEach(i => {
     const text = i.textContent?.trim() || '';
-    let nextText = i.nextSibling?.textContent?.trim() || '';
+    // nextSibling 也可能是个空的 #text node
+    let nextText = i.nextSibling?.textContent?.trim() || i.nextElementSibling?.textContent?.trim() || '';
 
     if (text.startsWith('作者')) {
       writer = i.parentElement?.id === 'info'
@@ -107,7 +109,8 @@ function buildBookItem(doc: Document) {
         : i.parentElement?.textContent?.trim().replace('作者:', '').trim() || '';
 
     } else if (text.startsWith('出版社')) {
-      publisher = i.nextElementSibling?.tagName === 'BR'
+      // nextSibling 也可能是个空的 #text node，则需要跳过
+      publisher = (i.nextElementSibling?.tagName === 'BR' || !i.nextSibling?.textContent?.trim())
         ? nextText
         // 出版社可能有单独链接 <a>上海三联书店</a>
         : i.parentElement?.textContent?.trim() || '';
@@ -127,7 +130,6 @@ function buildBookItem(doc: Document) {
   });
 
   return {
-    [DB_PROPERTIES.BOOK_TITLE]: title,
     [DB_PROPERTIES.NAME]: title,
     [DB_PROPERTIES.COVER]: cover, // optional
     [DB_PROPERTIES.WRITER]: writer, // optional
