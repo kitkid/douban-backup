@@ -144,10 +144,30 @@ function buildGameItem(doc: Document) {
   const title = doc.querySelector('#wrapper #content h1')?.textContent?.trim() || '';
   const img = doc.querySelector('.item-subject-info .pic img') as HTMLImageElement;
   const cover = img?.title !== ImgDefaultTitle.Cover && img?.src.length <= 100 ? img?.src.replace(/\.webp$/, '.jpg') : '';
-  const gameInfo = doc.querySelector('#content .game-attr') as Element;
+  
+  // 检查是否找到游戏信息区域
+  const gameInfo = doc.querySelector('#content .game-attr') as Element | null;
+  
+  if (!gameInfo) {
+    console.error('未找到游戏信息区域');
+    return {
+      [DB_PROPERTIES.GAME_TITLE]: title,
+      [DB_PROPERTIES.NAME]: title,
+      [DB_PROPERTIES.COVER]: cover, 
+      [DB_PROPERTIES.GENRE]: [], 
+      [DB_PROPERTIES.RELEASE_DATE]: '', 
+    };
+  }
+
   const dts = [...gameInfo.querySelectorAll('dt')];
+  
+  if (dts.length === 0) {
+    console.error('未找到游戏属性项');
+  }
+
   const genre: string[] = [];
   let releaseDate = '';
+  
   dts.forEach(dt => {
     if (dt.textContent?.startsWith('类型')) {
       const strs = [...dt.nextElementSibling!.querySelectorAll('a')].map((a) => a.textContent?.trim() || '').filter(v => v);
