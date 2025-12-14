@@ -42,6 +42,9 @@ export const PropertyTypeMap: Record<DB_PROPERTIES_KEYS, NotionPropTypesEnum> = 
   GAME_TITLE: NotionPropTypesEnum.TITLE,
   DRAMA_TITLE: NotionPropTypesEnum.TITLE,
   COVER: NotionPropTypesEnum.FILES,
+  TAGS:  NotionPropTypesEnum.MULTI_SELECT,
+  COMMENTS:  NotionPropTypesEnum.RICH_TEXT,
+  COUNTRYINFO: NotionPropTypesEnum.RICH_TEXT,
   RATING: NotionPropTypesEnum.MULTI_SELECT,
   RATING_DATE: NotionPropTypesEnum.DATE,
   COMMENTS: NotionPropTypesEnum.RICH_TEXT,
@@ -58,12 +61,4 @@ export const PropertyTypeMap: Record<DB_PROPERTIES_KEYS, NotionPropTypesEnum> = 
   PUBLISHING_HOUSE: NotionPropTypesEnum.RICH_TEXT,
   WRITER: NotionPropTypesEnum.RICH_TEXT,
   ISBN: NotionPropTypesEnum.NUMBER,
-};
-
-export const EMOJI = {
-  movie: '🎞',
-  music: '🎶',
-  book: '📖',
-  game: '🕹',
-  drama: '💃🏻',
 };

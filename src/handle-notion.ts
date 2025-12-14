@@ -1,5 +1,11 @@
 import { consola } from 'consola';
 import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
+import timezone from 'dayjs/plugin/timezone';
+import tz from 'dayjs/plugin/timezone';
+dayjs.extend(utc);
+dayjs.extend(timezone);
+dayjs.tz.setDefault('Asia/Shanghai');
 import dotenv from 'dotenv';
 import { Client, type DatabaseObjectResponse } from '@notionhq/client';
 import { type CreatePageParameters } from '@notionhq/client/build/src/api-endpoints';
@@ -7,6 +13,7 @@ import scrapyDouban from './handle-douban';
 import { getDataSourceId, sleep, buildPropertyValue } from './utils';
 import { PropertyTypeMap, EMOJI } from './const';
 import DB_PROPERTIES from '../cols.json';
+import { PropertyTypeMap } from './const';
 import {
   ItemCategory,
   type FeedItem,
@@ -16,7 +23,7 @@ import {
 } from './types';
 
 // https://github.com/makenotion/notion-sdk-js/issues/280#issuecomment-1178523498
-type EmojiRequest = Extract<CreatePageParameters['icon'], { type?: 'emoji'; }>['emoji'];
+
 
 dotenv.config();
 
@@ -127,8 +134,9 @@ async function syncNotionDB(categorizedFeeds: FeedItem[], category: ItemCategory
       const itemData = await scrapyDouban(newFeedItem.link, category);
       itemData[DB_PROPERTIES.ITEM_LINK] = newFeedItem.link;
       itemData[DB_PROPERTIES.RATING] = newFeedItem.rating;
-      itemData[DB_PROPERTIES.RATING_DATE] = dayjs(newFeedItem.time).format('YYYY-MM-DD');
+      itemData[DB_PROPERTIES.RATING_DATE] = dayjs(newFeedItem.time).tz('Asia/Shanghai').format('YYYY-MM-DD HH:mm+08:00');
       itemData[DB_PROPERTIES.COMMENTS] = newFeedItem.comment;
+      itemData[DB_PROPERTIES.TAGS] = newFeedItem.tags;
       const successful = await addItemToNotion(itemData, category);
       if (!successful) {
         failedItems.push({
@@ -201,10 +209,7 @@ async function addItemToNotion(itemData: {
         type: "data_source_id",
         data_source_id: dataSourceId,
       },
-      icon: {
-        type: 'emoji',
-        emoji: EMOJI[category] as EmojiRequest,
-      },
+
       // fill in properties by the format: https://developers.notion.com/reference/page#page-property-value
       properties,
     };

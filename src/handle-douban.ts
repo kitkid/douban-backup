@@ -59,11 +59,17 @@ function buildMovieItem(doc: Document) {
   const genre = [...doc.querySelectorAll('#info [property="v:genre"]')].map(i => i.textContent || '').filter(v => v);
   const imdbInfo = [...doc.querySelectorAll(InfoSelector)].filter(i => i.textContent?.startsWith('IMDb'));
   const imdbLink = imdbInfo.length ? 'https://www.imdb.com/title/' + imdbInfo[0].nextSibling?.textContent?.trim() : '';
+  let countryInfoValue = "";
+  const countryInfo = [...doc.querySelectorAll('#info span.pl')].filter(i => i.textContent.startsWith('制片国家/地区:'));
+    if (countryInfo.length) {
+      countryInfoValue = countryInfo[0].nextSibling.textContent.trim();
+    }
 
   return {
     [DB_PROPERTIES.NAME]: title,
     [DB_PROPERTIES.MOVIE_TITLE]: title,
     [DB_PROPERTIES.YEAR]: year,
+    [DB_PROPERTIES.COUNTRYINFO]: countryInfoValue,
     [DB_PROPERTIES.POSTER]: poster, // optional
     [DB_PROPERTIES.DIRECTORS]: directors,
     [DB_PROPERTIES.SCREENWRITERS]: writers, // optional
@@ -162,11 +168,29 @@ function buildGameItem(doc: Document) {
   const title = doc.querySelector('#wrapper #content h1')?.textContent?.trim() || '';
   const img = doc.querySelector('.item-subject-info .pic img') as HTMLImageElement;
   const cover = img?.title !== ImgDefaultTitle.Cover && img?.src.length <= 100 ? img?.src.replace(/\.webp$/, '.jpg') : '';
+  
+  // 检查是否找到游戏信息区域
   // attributes class name seems to have changed to `thing-attr` instead of `game-attr`
   const gameInfo = doc.querySelector('#content .game-attr') || doc.querySelector('#content .thing-attr') as Element;
+    if (!gameInfo) {
+    console.error('未找到游戏信息区域');
+    return {
+      [DB_PROPERTIES.GAME_TITLE]: title,
+      [DB_PROPERTIES.NAME]: title,
+      [DB_PROPERTIES.COVER]: cover, 
+      [DB_PROPERTIES.GENRE]: [], 
+      [DB_PROPERTIES.RELEASE_DATE]: '', 
+    };
+  }
   const dts = [...gameInfo.querySelectorAll('dt')];
+  
+  if (dts.length === 0) {
+    console.error('未找到游戏属性项');
+  }
+
   const genre: string[] = [];
   let releaseDate = '';
+  
   dts.forEach(dt => {
     if (dt.textContent?.startsWith('类型')) {
       const strs = [...dt.nextElementSibling!.querySelectorAll('a')].map((a) => a.textContent?.trim() || '').filter(v => v);
